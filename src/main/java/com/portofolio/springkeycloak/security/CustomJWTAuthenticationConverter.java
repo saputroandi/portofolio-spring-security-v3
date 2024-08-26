@@ -35,7 +35,7 @@ public class CustomJWTAuthenticationConverter implements Converter<Jwt, Abstract
             List<GrantedAuthority> roles = new ArrayList<>();
 
             for (String keycloakRole : keycloakRoles) {
-                roles.add(new SimpleGrantedAuthority("ROLE_" + keycloakRole));
+                roles.add(new SimpleGrantedAuthority(keycloakRole));
             }
 
             return roles;
