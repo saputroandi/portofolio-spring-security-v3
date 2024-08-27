@@ -20,20 +20,22 @@ import com.portofolio.springkeycloak.security.CustomJWTAuthenticationConverter;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    CustomJWTAuthenticationConverter jwtAuthenticationConverter;
+    // @Autowired
+    // CustomJWTAuthenticationConverter jwtAuthenticationConverter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
-                // .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 // .oauth2ResourceServer((oauth2) ->
                 // oauth2.opaqueToken(Customizer.withDefaults()))
-                .oauth2ResourceServer((oauth2) -> oauth2
-                        .jwt(configurer -> configurer.jwtAuthenticationConverter(jwtAuthenticationConverter)))
+                // .oauth2ResourceServer((oauth2) -> oauth2
+                // .jwt(configurer ->
+                // configurer.jwtAuthenticationConverter(jwtAuthenticationConverter)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return httpSecurity.build();
@@ -44,5 +46,16 @@ public class SecurityConfig {
         DefaultMethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler = new DefaultMethodSecurityExpressionHandler();
         defaultMethodSecurityExpressionHandler.setDefaultRolePrefix("");
         return defaultMethodSecurityExpressionHandler;
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 }

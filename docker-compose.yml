@@ -1,0 +1,30 @@
+services:
+  db-keycloak:
+    image: postgres:16.1
+    volumes:
+      - /home/andaru/Documents/volumes/local-keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    command: start-dev
+    environment:
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 9090
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin1234
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db-keycloak/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: root
+    ports:
+      - 9090:8080
+    depends_on:
+      - db-keycloak
