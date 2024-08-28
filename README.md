@@ -49,7 +49,7 @@ You should see logs indicating that all app have started successfully.
 Finally, access your application via the browser:
 
 ```
-http://localhost8080/swagger-ui/index.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 You should see all available endpoint and method and ready for use.
